@@ -21,6 +21,9 @@ class FileReaderServiceTest extends Specification {
         when:
         instance.readFileAndAddToQueue(file)
         then:
+        while (!instance.processed) {
+            sleep(10)
+        }
         queue.size() == 6
     }
 
@@ -28,16 +31,10 @@ class FileReaderServiceTest extends Specification {
         when:
         instance.readFileAndAddToQueue(file2)
         then:
+        while (!instance.processed) {
+            sleep(10)
+        }
         queue.size() == 6
     }
 
-    def "should read file and "() {
-        expect:
-        file3.write("")
-        for(int counter=0;counter<100000;counter++) {
-            file3.append("{\"id\":\"scsmbstgrc${counter}\", \"state\":\"STARTED\", \"timestamp\":1491377495210}\n" +
-                        "{\"id\":\"scsmbstgrc${counter}\", \"state\":\"FINISHED\", \"timestamp\":1491377495216}\n")
-        }
-        true
-    }
 }

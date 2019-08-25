@@ -15,7 +15,7 @@ public class AppConfig {
 
     private ArrayBlockingQueue<LogEntry> globalQueue = new ArrayBlockingQueue<>(1000);
     private Gson gson = new Gson();
-    private int threshold = 4;
+    private int threshold = 4; //TODO: should be in config file
 
     @Bean
     public FileReaderService fileReaderService() {

@@ -1,6 +1,5 @@
 package com.test.loader.services;
 
-import com.test.loader.Application;
 import com.test.loader.model.EventEntry;
 import com.test.loader.model.LogEntry;
 import com.test.loader.repository.EventRepository;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,7 +27,12 @@ public class EntryWriterService {
     public void processEvent() {
         int eventCounter = 0;
         while (!globalQueue.isEmpty() || !fileReaderService.isProcessed()) {
-            LogEntry logEntry = globalQueue.poll();
+            LogEntry logEntry = null;
+            try {
+                logEntry = globalQueue.poll(200, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (logEntry == null || Strings.isEmpty(logEntry.getId())) {
                log.warn("log entry or id empty, skipping");
                continue;
@@ -58,6 +63,7 @@ public class EntryWriterService {
                 Stream.of(firstEntry, secondEntry).filter(log -> Strings.isNotEmpty(log.getType())).findAny().map(LogEntry::getType).orElse(null),
                 Stream.of(firstEntry, secondEntry).filter(log -> Strings.isNotEmpty(log.getHost())).findAny().map(LogEntry::getHost).orElse(null),
                 time > threshold);
+        //TODO: multiple insert to increase performance
         eventRepository.save(eventEntry);
     }
 

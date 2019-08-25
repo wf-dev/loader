@@ -1,6 +1,5 @@
 package com.test.loader;
 
-import com.test.loader.model.LogEntry;
 import com.test.loader.services.EntryWriterService;
 import com.test.loader.services.FileReaderService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +39,7 @@ public class Application implements CommandLineRunner {
         if (file.exists() && file.canRead()) {
             fileReaderService.readFileAndAddToQueue(file);
             writerService.processEvent();
+            fileReaderService.shutdown();
         } else {
             throw new IllegalArgumentException("Unable to open or read file: " + file.getAbsolutePath());
         }

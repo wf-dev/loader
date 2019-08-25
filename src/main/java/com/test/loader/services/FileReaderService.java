@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Slf4j
@@ -20,7 +21,7 @@ public class FileReaderService {
     private final Gson gson;
     private final ArrayBlockingQueue<LogEntry> globalQueue;
 
-    private final Executor executor = Executors.newFixedThreadPool(1);
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
     private boolean isProcessed = false;
 
     public FileReaderService(Gson gson, ArrayBlockingQueue<LogEntry> globalQueue) {
@@ -63,6 +64,6 @@ public class FileReaderService {
     }
 
     public void shutdown() {
-        //executor.
+        executor.shutdown();
     }
 }
